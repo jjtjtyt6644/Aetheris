@@ -17,30 +17,45 @@ interface UserData {
   bgId: string;
 }
 
-/** Saves user data to Firestore (debounced) */
 export function useFirestoreSync(user: User | null) {
+  const [isSyncing, setIsSyncing] = useState(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const saveData = useCallback(async (data: Partial<UserData>) => {
+  const saveData = useCallback(async (data: Partial<UserData>, immediate = false) => {
     if (!user) return;
-    if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    timeoutRef.current = setTimeout(async () => {
+    
+    const performSync = async () => {
+      setIsSyncing(true);
       try {
         await setDoc(doc(db, "users", user.uid), data, { merge: true });
       } catch (e) {
         console.warn("Firestore sync failed:", e);
+      } finally {
+        setTimeout(() => setIsSyncing(false), 1000); // Keep indicator briefly for UX
       }
-    }, 1500);
+    };
+
+    if (immediate) {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      await performSync();
+      return;
+    }
+
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    timeoutRef.current = setTimeout(performSync, 1500);
   }, [user]);
 
   /** Loads user data from Firestore on login */
   const loadData = useCallback(async (): Promise<Partial<UserData> | null> => {
     if (!user) return null;
+    setIsSyncing(true);
     try {
       const snapshot = await getDoc(doc(db, "users", user.uid));
       if (snapshot.exists()) return snapshot.data() as Partial<UserData>;
     } catch (e) {
       console.warn("Firestore load failed:", e);
+    } finally {
+      setIsSyncing(false);
     }
     return null;
   }, [user]);
@@ -51,5 +66,5 @@ export function useFirestoreSync(user: User | null) {
     };
   }, []);
 
-  return { saveData, loadData };
+  return { saveData, loadData, isSyncing };
 }

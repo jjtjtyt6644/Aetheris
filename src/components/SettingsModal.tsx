@@ -2,11 +2,12 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Clock, Settings, Image as ImageIcon, Music, LogIn, UserPlus, User, LogOut, Loader2, Mail, Lock, AlertCircle } from "lucide-react";
+import { X, Clock, Settings, Image as ImageIcon, Music, LogIn, UserPlus, User, LogOut, Loader2, Mail, Lock, AlertCircle, Check, RefreshCw } from "lucide-react";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { BACKGROUNDS } from "@/components/Wallpaper";
 import AudioMixer from "@/components/AudioMixer";
 import { useAuth } from "@/contexts/AuthContext";
+import { useFirestoreSync } from "@/hooks/useFirestoreSync";
 
 interface TimerSettings {
   focusDuration: number;
@@ -156,6 +157,21 @@ function AccountPanel() {
   const [password, setPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+
+  const { saveData, isSyncing } = useFirestoreSync(user);
+  
+  // Get data to sync
+  const [tasks] = useLocalStorage<any[]>("aetheris_tasks", []);
+  const [settings] = useLocalStorage<TimerSettings>("aetheris_timer_settings", DEFAULT_SETTINGS);
+  const [bgId] = useLocalStorage<string>("aetheris_bg_id", "");
+
+  const handleManualSync = async () => {
+    if (!user) return;
+    await saveData({ tasks, timerSettings: settings, bgId }, true);
+    setShowSuccess(true);
+    setTimeout(() => setShowSuccess(false), 3000);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -195,8 +211,28 @@ function AccountPanel() {
             <p className="text-sm text-white/50 truncate">{user.email}</p>
           </div>
         </div>
-        <div className="pt-2">
-          <p className="text-xs text-white/40 mb-4">Your tasks, settings, and background are automatically synced across devices.</p>
+        <div className="pt-2 space-y-3">
+          <p className="text-xs text-white/40 mb-4">Your tasks, settings, and background can be synced across devices.</p>
+          
+          <button 
+            onClick={handleManualSync}
+            disabled={isSyncing}
+            className={`flex items-center gap-2 text-sm px-4 py-3 rounded-xl transition-all w-full justify-center border ${
+              showSuccess 
+                ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-300" 
+                : "bg-white/10 hover:bg-white/20 border-white/10 text-white"
+            }`}
+          >
+            {isSyncing ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : showSuccess ? (
+              <Check className="w-4 h-4" />
+            ) : (
+              <RefreshCw className="w-4 h-4" />
+            )}
+            {isSyncing ? "Syncing..." : showSuccess ? "Data Synced!" : "Sync Data Now"}
+          </button>
+
           <button onClick={logOut} className="flex items-center gap-2 text-sm text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 px-4 py-2.5 rounded-xl transition-colors w-full justify-center">
             <LogOut className="w-4 h-4" />
             Sign Out
