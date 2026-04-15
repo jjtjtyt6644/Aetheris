@@ -212,31 +212,33 @@ function AccountPanel() {
           </div>
         </div>
         <div className="pt-2 space-y-3">
-          <p className="text-xs text-white/40 mb-4">Your tasks, settings, and background can be synced across devices.</p>
+          <p className="text-xs text-white/40 mb-4">Your tasks, settings, and background are automatically synced to the cloud in real-time.</p>
           
-          <button 
-            onClick={handleManualSync}
-            disabled={isSyncing}
-            className={`flex items-center gap-2 text-sm px-4 py-3 rounded-xl transition-all w-full justify-center border ${
-              showSuccess 
-                ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-300" 
-                : "bg-white/10 hover:bg-white/20 border-white/10 text-white"
-            }`}
-          >
-            {isSyncing ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : showSuccess ? (
-              <Check className="w-4 h-4" />
-            ) : (
-              <RefreshCw className="w-4 h-4" />
-            )}
-            {isSyncing ? "Syncing..." : showSuccess ? "Data Synced!" : "Sync Data Now"}
-          </button>
+          <div className="flex flex-col gap-2">
+            <button 
+              onClick={handleManualSync}
+              disabled={isSyncing}
+              className={`flex items-center gap-2 text-sm px-4 py-3 rounded-xl transition-all w-full justify-center border ${
+                showSuccess 
+                  ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-300" 
+                  : "bg-white/5 hover:bg-white/10 border-white/5 text-white/70 hover:text-white"
+              }`}
+            >
+              {isSyncing ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : showSuccess ? (
+                <Check className="w-4 h-4" />
+              ) : (
+                <RefreshCw className="w-4 h-4" />
+              )}
+              {isSyncing ? "Syncing..." : showSuccess ? "Data Synced!" : "Force Sync (Fallback)"}
+            </button>
 
-          <button onClick={logOut} className="flex items-center gap-2 text-sm text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 px-4 py-2.5 rounded-xl transition-colors w-full justify-center">
-            <LogOut className="w-4 h-4" />
-            Sign Out
-          </button>
+            <button onClick={logOut} className="flex items-center gap-2 text-sm text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 px-4 py-2.5 rounded-xl transition-colors w-full justify-center">
+              <LogOut className="w-4 h-4" />
+              Sign Out
+            </button>
+          </div>
         </div>
       </div>
     );

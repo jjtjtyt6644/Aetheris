@@ -8,10 +8,46 @@ import SettingsModal from "@/components/SettingsModal";
 import AboutModal from "@/components/AboutModal";
 import { Settings, Image as ImageIcon, Music, CheckSquare, Info, User } from "lucide-react";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { useAuth } from "@/contexts/AuthContext";
+import { useFirestoreSync } from "@/hooks/useFirestoreSync";
+import { Task } from "@/components/TaskList";
 import { motion, AnimatePresence } from "framer-motion";
+import { useEffect } from "react";
+
+const DEFAULT_SETTINGS = {
+  focusDuration: 25 * 60,
+  shortBreakDuration: 5 * 60,
+  longBreakDuration: 15 * 60,
+  sessionsUntilLongBreak: 4,
+};
 
 export default function Home() {
+  const { user } = useAuth();
   const [bgId, setBgId] = useLocalStorage("aetheris_bg_id", BACKGROUNDS[0].id);
+  const [tasks, setTasks] = useLocalStorage<Task[]>("aetheris_tasks", []);
+  const [settings, setSettings] = useLocalStorage("aetheris_timer_settings", DEFAULT_SETTINGS);
+
+  const { isSyncing, saveData, loadData } = useFirestoreSync(user);
+
+  // --- 1. Automatic Load on Login ---
+  useEffect(() => {
+    if (user) {
+      loadData().then((cloudData) => {
+        if (cloudData) {
+          if (cloudData.bgId) setBgId(cloudData.bgId);
+          if (cloudData.tasks) setTasks(cloudData.tasks);
+          if (cloudData.timerSettings) setSettings(cloudData.timerSettings);
+        }
+      });
+    }
+  }, [user, loadData, setBgId, setTasks, setSettings]);
+
+  // --- 2. Automatic Save on Change ---
+  useEffect(() => {
+    if (user) {
+      saveData({ tasks, timerSettings: settings, bgId });
+    }
+  }, [tasks, settings, bgId, user, saveData]);
 
   const [showTasks, setShowTasks] = useState(false);
   const [showSettings, setShowSettings] = useState(false);

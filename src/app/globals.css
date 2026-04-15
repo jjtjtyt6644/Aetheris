@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@plugin "tailwindcss-animate";
 
 /* Hide Next.js Dev Tool overlays permanently */
 #nextjs-build-indicator,
