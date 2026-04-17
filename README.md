@@ -1,36 +1,86 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AETHERIS | Next-Generation Focus Protocol
 
-## Getting Started
+![Aetheris Logo](/public/logo.png)
 
-First, run the development server:
+**Aetheris** is a high-fidelity, collaborative Pomodoro environment designed for deep focus and optimized productivity. It merges advanced real-time synchronization with AI-driven task management to create the ultimate study hub.
+
+---
+
+## ✨ Key Features
+
+### 🧠 AI Focus Coach
+- **Goal Slicing:** Convert massive, daunting projects into actionable, 25-minute milestones using AI.
+- **Dynamic Context:** The AI understands your focus state and helps you break through procrastination.
+
+### 🌐 Collaborative Study Rooms
+- **Real-Time Sync:** Timers are perfectly synchronized across all participants using Firebase Realtime Database.
+- **Moderated Chat:** Stay connected without distractions. Includes a robust moderation suite (Kicking, Banning, and Reporting).
+- **Presence Indicators:** See who is focused and who is on break in real-time.
+
+### 🎨 Atmospheric Immersion
+- **Custom Scenes:** Switch between minimalist high-altitude views, cozy libraries, and more.
+- **Audio Mixer:** Layer custom soundscapes (Rain, Café, White Noise) with a tailored volume mixer.
+
+---
+
+## 🛠️ Technical Stack
+
+- **Framework:** Next.js 16 (React 19)
+- **Styling:** Tailwind CSS 4 + Glassmorphism
+- **Animations:** Framer Motion
+- **Backend/Database:** 
+  - **Firebase Auth:** Secure user management.
+  - **Firestore:** Persistent storage for tasks, stats, and settings.
+  - **Realtime Database (RTDB):** Low-latency room & chat synchronization.
+- **AI Engine:** Groq (Llama 3 / Mixtral) for instant focus coaching.
+
+---
+
+## 🚀 Deployment Guide (Vercel)
+
+Aetheris is optimized for zero-config deployment on Vercel.
+
+### 1. Environment Setup
+Create a new project on Vercel and add the following variables from your `.env.local` (see `.env.example` for the list):
+- `NEXT_PUBLIC_FIREBASE_*` (All 6 Web SDK keys)
+- `GROQ_API_KEY`
+- `FIREBASE_SERVICE_ACCOUNT_KEY` (Minified JSON string)
+
+### 2. Firebase Security Rules
+Ensure your Firestore and RTDB rules are set to `v2`. 
+- **Firestore:** Restricted to Auth users for profiles; public-write for `reports`.
+- **RTDB:** Room nodes require valid Room IDs; cleanup logic allows the last user to delete empty rooms.
+
+### 3. Build & Deploy
+```bash
+npm run build
+```
+Vercel will automatically detect the Next.js framework and handle the rest.
+
+---
+
+## 📜 Legal & Compliance
+
+Aetheris includes a built-in **Legal Notice & Terms of Service** located in the documentation (📖 icon).
+- **Indemnification:** Protections for the developer against third-party claims.
+- **Data Privacy:** GDPR/CCPA-aligned disclosures regarding Firebase and AI sub-processing.
+
+---
+
+## 🧑‍💻 Development
 
 ```bash
+# Install dependencies
+npm install
+
+# Run development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## ⚖️ License
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Distributed under the MIT License. See `LICENSE` for more information.
 
-## Learn More
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

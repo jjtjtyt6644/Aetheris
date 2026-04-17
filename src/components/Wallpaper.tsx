@@ -38,26 +38,41 @@ export default function Wallpaper({ currentBgId }: WallpaperProps) {
   }, [currentBgId]);
 
   // Progressive optimization: auto=format for browser support, q=60 for speed, w=1920 for desktop
-  const imageUrl = `https://images.unsplash.com/photo-${activeId}?auto=format&fit=crop&w=1920&q=60`;
+  const isCustomUrl = activeId.startsWith("http");
+  const imageUrl = isCustomUrl 
+    ? activeId 
+    : `https://images.unsplash.com/photo-${activeId}?auto=format&fit=crop&w=1920&q=60`;
 
   return (
     <div className="fixed inset-0 w-full h-full -z-10 bg-[#0a0a0a]">
-      <Image
-        key={activeId}
-        src={imageUrl}
-        alt="Aetheris Background"
-        fill
-        priority
-        quality={60}
-        loading="eager"
-        sizes="100vw"
-        className={`object-cover transition-opacity duration-700 ease-in-out ${
-          loaded ? "opacity-100" : "opacity-0"
-        }`}
-        onLoad={() => setLoaded(true)}
-        placeholder="blur"
-        blurDataURL={BLUR_PLACEHOLDER}
-      />
+      {isCustomUrl ? (
+        <img
+          key={activeId}
+          src={imageUrl}
+          alt="Aetheris Custom Background"
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ease-in-out ${
+            loaded ? "opacity-100" : "opacity-0"
+          }`}
+          onLoad={() => setLoaded(true)}
+        />
+      ) : (
+        <Image
+          key={activeId}
+          src={imageUrl}
+          alt="Aetheris Background"
+          fill
+          priority
+          quality={60}
+          loading="eager"
+          sizes="100vw"
+          className={`object-cover transition-opacity duration-700 ease-in-out ${
+            loaded ? "opacity-100" : "opacity-0"
+          }`}
+          onLoad={() => setLoaded(true)}
+          placeholder="blur"
+          blurDataURL={BLUR_PLACEHOLDER}
+        />
+      )}
       {/* Subtle dark overlay for text legibility */}
       <div className="absolute inset-0 bg-black/15 pointer-events-none" />
     </div>

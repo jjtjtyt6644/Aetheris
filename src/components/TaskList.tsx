@@ -80,9 +80,9 @@ export default function TaskList({ onClose }: { onClose?: () => void }) {
             No tasks yet.<br/>What will you focus on?
           </div>
         ) : (
-          tasks.map((task) => (
+          tasks.map((task, i) => (
             <div
-              key={task.id}
+              key={task.id || i}
               className={`group flex items-center justify-between p-3 rounded-lg transition-all ${
                 task.completed ? "bg-white/5 opacity-50" : "bg-white/10 hover:bg-white/20"
               }`}

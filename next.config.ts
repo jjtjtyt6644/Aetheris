@@ -5,6 +5,8 @@ const nextConfig: NextConfig = {
     position: "bottom-right",
   },
   images: {
+    formats: ["image/webp"],
+    qualities: [60, 75, 80, 90, 100],
     remotePatterns: [
       {
         protocol: "https",
