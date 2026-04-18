@@ -28,11 +28,11 @@ import { useFirestoreSync } from "@/hooks/useFirestoreSync";
 import { useAbuseProtection } from "@/hooks/useAbuseProtection";
 import { useStudyRoom } from "@/hooks/useStudyRoom";
 import { Task } from "@/components/TaskList";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import TimeoutScreen from "@/components/TimeoutScreen";
 import BanScreen from "@/components/BanScreen";
 import StatsModal from "@/components/StatsModal";
-import DocsModal from "@/components/DocsModal";
 import AetherisModal from "@/components/AetherisModal";
 import StudyRoomDrawer from "@/components/StudyRoomDrawer";
 import { Sparkles } from "lucide-react";
@@ -170,7 +170,6 @@ export default function Home() {
   const [showStats, setShowStats] = useState(false);
   const [showAetheris, setShowAetheris] = useState(false);
   const [showStudyRoom, setShowStudyRoom] = useState(false);
-  const [showDocs, setShowDocs] = useState(false);
   const [imgFailed, setImgFailed] = useState(false);
 
   // ─── Study Room ───────────────────────────────────────────────────────────
@@ -197,7 +196,7 @@ export default function Home() {
 
       <AetherisModal isOpen={showAetheris} onClose={() => setShowAetheris(false)} />
       <StatsModal isOpen={showStats} onClose={() => setShowStats(false)} />
-      <DocsModal isOpen={showDocs} onClose={() => setShowDocs(false)} />
+
       <SettingsModal
         isOpen={showSettings}
         onClose={() => setShowSettings(false)}
@@ -334,8 +333,8 @@ export default function Home() {
           </span>
         </a>
 
-        <button
-          onClick={() => setShowDocs(true)}
+        <Link
+          href="/docs"
           className="group relative p-3 rounded-full bg-black/20 hover:bg-white/20 border border-white/10 backdrop-blur-md transition-all text-white/60 hover:text-white"
           aria-label="Documentation"
         >
@@ -343,7 +342,7 @@ export default function Home() {
           <span className="absolute -top-10 left-1/2 -translate-x-1/2 bg-black/90 text-white px-2 py-1 rounded text-xs opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none border border-white/10">
             Docs
           </span>
-        </button>
+        </Link>
 
         <button
           onClick={() => setShowAbout(true)}
